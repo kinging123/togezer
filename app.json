@@ -9,10 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "bundleIdentifier": "app.togezer",
       "supportsTablet": true,
       "associatedDomains": ["applinks:togezer.vercel.app"]
     },
     "android": {
+      "package": "app.togezer",
       "adaptiveIcon": {
         "backgroundColor": "#F5F1E8",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
