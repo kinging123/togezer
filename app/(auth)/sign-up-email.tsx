@@ -1,5 +1,6 @@
-import { useSignUp } from '@clerk/expo'
+import { useSignUp, useUser } from '@clerk/expo'
 import { router } from 'expo-router'
+import { usePostSignUp } from '@/features/auth/hooks/usePostSignUp'
 import { useState } from 'react'
 import {
   KeyboardAvoidingView,
@@ -16,6 +17,8 @@ import { Colors, Fonts, FontSizes, Spacing } from '@/constants/theme'
 
 export default function SignUpEmailScreen() {
   const { signUp, setActive, isLoaded } = useSignUp()
+  const { user } = useUser()
+  const { handlePostSignUp } = usePostSignUp()
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
   const [pendingVerification, setPendingVerification] = useState(false)
@@ -45,7 +48,8 @@ export default function SignUpEmailScreen() {
       const result = await signUp.attemptEmailAddressVerification({ code })
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId })
-        router.replace('/(app)')
+        const name = user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] ?? 'friend'
+        await handlePostSignUp(name)
       }
     } catch (err: any) {
       setError(err.errors?.[0]?.longMessage ?? 'invalid code')

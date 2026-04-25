@@ -1,5 +1,6 @@
-import { useOAuth } from '@clerk/expo'
+import { useOAuth, useUser } from '@clerk/expo'
 import { router } from 'expo-router'
+import { usePostSignUp } from '@/features/auth/hooks/usePostSignUp'
 import * as WebBrowser from 'expo-web-browser'
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
@@ -33,13 +34,16 @@ function FacebookIcon() {
 export default function SignUpScreen() {
   const { startOAuthFlow: startGoogle } = useOAuth({ strategy: 'oauth_google' })
   const { startOAuthFlow: startFacebook } = useOAuth({ strategy: 'oauth_facebook' })
+  const { user } = useUser()
+  const { handlePostSignUp } = usePostSignUp()
 
   async function handleOAuth(start: ReturnType<typeof useOAuth>['startOAuthFlow']) {
     try {
       const { createdSessionId, setActive } = await start()
       if (createdSessionId) {
         await setActive!({ session: createdSessionId })
-        router.replace('/(app)')
+        const name = user?.fullName ?? user?.firstName ?? 'friend'
+        await handlePostSignUp(name)
       }
     } catch (err) {
       console.error('OAuth error', err)
