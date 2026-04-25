@@ -1,8 +1,9 @@
-import { Platform, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import { router } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
+import { Button } from '@/components/Button'
 import { Logo } from '@/components/Logo'
-import { BorderWidths, Colors, Fonts, FontSizes, Radii, Shadows, Spacing } from '@/constants/theme'
+import { Colors, Fonts, FontSizes, Spacing } from '@/constants/theme'
 
 export default function WelcomeScreen() {
   return (
@@ -10,6 +11,7 @@ export default function WelcomeScreen() {
       <StatusBar style="dark" />
       <View style={styles.container}>
 
+        <View style={styles.middle}>
         <View style={styles.top}>
           <Logo size={24} />
 
@@ -24,21 +26,19 @@ export default function WelcomeScreen() {
             <Text style={styles.body}>see your friends show up too.</Text>
           </View>
         </View>
+        </View>
 
         <View style={styles.bottom}>
-          <Pressable
-            style={({ pressed }) => [styles.btnPrimary, pressed && styles.btnPrimaryPressed]}
+          <Button
+            label="get started"
             onPress={() => router.push('/(auth)/sign-up')}
-          >
-            <Text style={styles.btnPrimaryText}>get started</Text>
-          </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [styles.btnSecondary, pressed && styles.btnSecondaryPressed]}
+            variant="primary"
+          />
+          <Button
+            label="i already have an account"
             onPress={() => router.push('/(auth)/sign-in')}
-          >
-            <Text style={styles.btnSecondaryText}>i already have an account</Text>
-          </Pressable>
+            variant="ghost"
+          />
         </View>
 
       </View>
@@ -58,7 +58,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.s6,
     paddingTop: Spacing.s8,
     paddingBottom: Spacing.s6,
-    justifyContent: 'space-between',
+  },
+  middle: {
+    flex: 1,
+    justifyContent: 'center',
   },
 
   // ── Top section ──────────────────────────────────────────────
@@ -87,48 +90,6 @@ const styles = StyleSheet.create({
   // ── Bottom section ────────────────────────────────────────────
   bottom: {
     gap: Spacing.s3,
-  },
-  btnPrimary: {
-    backgroundColor: Colors.red,
-    borderWidth: BorderWidths.default,
-    borderColor: Colors.ink,
-    borderRadius: Radii.pill,
-    paddingVertical: 15,
-    alignItems: 'center',
-    ...Platform.select({
-      web: { boxShadow: `2px 2px 0 0 ${Colors.ink}` } as object,
-      default: Shadows.hardSm,
-    }),
-  },
-  btnPrimaryPressed: {
-    transform: [{ translateX: 2 }, { translateY: 2 }],
-    ...Platform.select({
-      web: { boxShadow: 'none' } as object,
-      default: { shadowOffset: { width: 0, height: 0 }, elevation: 0 },
-    }),
-  },
-  btnPrimaryText: {
-    fontFamily: Fonts.displaySemiBold,
-    fontSize: FontSizes.body,
-    color: Colors.ink,
-    letterSpacing: -0.2,
-  },
-  btnSecondary: {
-    borderWidth: BorderWidths.default,
-    borderColor: Colors.ink2,
-    borderStyle: 'dashed',
-    borderRadius: Radii.pill,
-    paddingVertical: 13,
-    alignItems: 'center',
-  },
-  btnSecondaryPressed: {
-    backgroundColor: Colors.bg2,
-  },
-  btnSecondaryText: {
-    fontFamily: Fonts.body,
-    fontSize: FontSizes.small,
-    color: Colors.ink2,
-    letterSpacing: -0.1,
   },
 })
 
