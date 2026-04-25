@@ -61,9 +61,10 @@ CREATE TABLE nudges (
   from_user_id text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   to_user_id   text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   habit_id     uuid NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
-  created_at   timestamptz NOT NULL DEFAULT now()
+  nudge_date   date NOT NULL,
+  created_at   timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (from_user_id, to_user_id, habit_id, nudge_date)
 );
-CREATE UNIQUE INDEX nudges_one_per_day ON nudges (from_user_id, to_user_id, habit_id, (created_at::date));
 
 -- reactions — schema defined now, feature deferred
 CREATE TABLE reactions (
