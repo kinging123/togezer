@@ -1,18 +1,21 @@
-import { useAuth } from '@clerk/expo'
 import { Redirect } from 'expo-router'
-import { View } from 'react-native'
-import { Colors } from '@/constants/theme'
+import { useAuth } from '@clerk/expo'
+import { ActivityIndicator, View } from 'react-native'
+import { useHasHabit } from '@/features/habits/hooks/useHasHabit'
 
-export default function Root() {
+export default function Guard() {
   const { isSignedIn, isLoaded } = useAuth()
+  const { hasHabit, isLoading } = useHasHabit()
 
-  // Hold on the brand background while Clerk initialises — seamless, no flash
-  if (!isLoaded) {
-    return <View style={{ flex: 1, backgroundColor: Colors.bg }} />
+  if (!isLoaded || (isSignedIn && isLoading)) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator />
+      </View>
+    )
   }
 
-  // TODO: redirect signed-in users to /(app) once that group has real screens
-  if (isSignedIn) return <Redirect href="/(app)" />
-
-  return <Redirect href="/(auth)" />
+  if (!isSignedIn)  return <Redirect href="/(auth)" />
+  if (!hasHabit)    return <Redirect href="/(onboarding)/pick-habit" />
+  return <Redirect href="/(app)" />
 }
