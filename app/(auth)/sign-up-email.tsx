@@ -1,5 +1,4 @@
 import { useSignUp, useUser } from '@clerk/expo'
-import { router } from 'expo-router'
 import { usePostSignUp } from '@/features/auth/hooks/usePostSignUp'
 import { useState } from 'react'
 import {

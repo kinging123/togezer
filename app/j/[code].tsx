@@ -28,7 +28,7 @@ export default function InvitePage() {
     }
 
     handle()
-  }, [isLoaded, isSignedIn, code])
+  }, [isLoaded, isSignedIn, code, acceptInvite])
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
