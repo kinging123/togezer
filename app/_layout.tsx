@@ -17,8 +17,14 @@ import { useEffect } from 'react'
 import { tokenCache } from '@/lib/clerk-token-cache'
 import { queryClient } from '@/lib/queryClient'
 import { SupabaseProvider } from '@/lib/SupabaseProvider'
+import { useRegisterPushToken } from '@/features/notifications/hooks/useRegisterPushToken'
 
 SplashScreen.preventAutoHideAsync()
+
+function AppServices() {
+  useRegisterPushToken()
+  return null
+}
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -45,6 +51,7 @@ export default function RootLayout() {
     >
       <SupabaseProvider>
         <QueryClientProvider client={queryClient}>
+          <AppServices />
           <Stack screenOptions={{ headerShown: false }} />
         </QueryClientProvider>
       </SupabaseProvider>
