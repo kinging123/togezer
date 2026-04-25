@@ -1,50 +1,111 @@
-# Welcome to your Expo app 👋
+# togezer
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+habits, but with the gang.
 
-## Get started
+a social habit-tracking app where you and your close friends hold each other accountable — one check-in a day, no scroll trap, no shame spiral. think duolingo streaks crossed with bereal.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## what it is
 
-2. Start the app
+you pick a habit (meditate, read, move your body, whatever). you check in once a day. your close friends see your streak. you see theirs. you react, you nudge, you stay consistent — together.
 
-   ```bash
-   npx expo start
-   ```
+the rules:
 
-In the output, you'll find options to open the app in a
+- **mutual-add only** — friends have to accept each other. no follower/following asymmetry.
+- **one grace day per week** — skipping once doesn't break your streak.
+- **one nudge per friend** — you can poke a friend who's about to miss a day. once. not spam.
+- **warmth over guilt** — when a streak breaks, the app meets you with a restart button, not a shame screen.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## user stories
 
-## Get a fresh project
+| #   | story                                                                                           |
+| --- | ----------------------------------------------------------------------------------------------- |
+| 01  | as a **new user**, i can pick one habit, set a cadence, and invite a friend in under 2 minutes. |
+| 02  | as a **daily user**, i open togezer once, check in, and leave. no feed loop, no scroll trap.    |
+| 03  | as a **proof-poster**, i can snap a quick photo (or skip it) to mark my habit done.             |
+| 04  | as a **friend**, i can see my close circle's streaks today, and react or comment in one tap.    |
+| 05  | as a **slacker**, i get one grace day per week that doesn't break my streak.                    |
+| 06  | as a **streak-holder**, i get one gentle nudge before midnight if i haven't checked in.         |
+| 07  | as a **friend**, i can nudge a friend who's about to break their streak — once, not spam.       |
+| 08  | as a **pair**, i can join a friend's habit and run a paired streak together.                    |
+| 09  | as a **returning user**, i can see a history of receipts (photos + notes) for each habit.       |
+| 10  | as a **human**, when i break a streak i'm met with warmth, not shame — and a one-tap restart.   |
 
-When you're ready, run:
+---
+
+## screens
+
+### flow 01 — onboarding
+
+welcome → sign up → pick habit → cadence → invite. five screens, under 2 minutes, ends at a shareable invite link so your first check-in already has an audience.
+
+### flow 02 — daily check-in
+
+the core loop. a single yes/no for each habit. grace day is one tap away. ends at a +1 confirmation.
+
+### flow 03 — home / today
+
+your streaks sit at the top in an ink card. below it: each friend's avatar, their habits, and a streak-dot row. scannable, scroll-light. "4 of 5 checked in" is all the peer pressure you need.
+
+### flow 04 — habit detail
+
+tap any habit to see its full history. stats + calendar heatmap.
+
+### flow 05 — streak at risk
+
+the highest-emotion moment. three temperatures: ticking-clock (midnight approaching), friend nudge (someone poked you), and the morning-after (already broken, restart is right there).
+
+### web companion
+
+read-mostly. view your streaks and friends' progress without a phone in hand. no camera, no primary check-in — the dashboard you'd open at work.
+
+---
+
+## tech stack
+
+| layer         | choice                                                          |
+| ------------- | --------------------------------------------------------------- |
+| framework     | Expo SDK 54, New Architecture (Fabric + JSI)                    |
+| routing       | Expo Router — file-based, web + native from one codebase        |
+| animations    | React Native Reanimated 4 + Gesture Handler                     |
+| auth          | Clerk (`@clerk/expo`) — Google, Apple, and more                 |
+| notifications | expo-notifications + expo-device                                |
+| fonts         | Space Grotesk (display + body) · JetBrains Mono (labels + mono) |
+
+---
+
+## design system
+
+**palette** — warm paper (`#F5F1E8`) · near-black ink (`#17150F`) · red-orange punch (`#FF4A1C`)
+
+**vibe** — swiss poster meets gen-z group chat. bold chunky sans, hard offset shadows, lowercase copy, habits as atoms, friends as a primitive.
+
+---
+
+## running locally
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+```bash
+npm run ios      # iOS simulator
+npm run android  # Android emulator
+npm run web      # browser at localhost:8081
+```
 
-## Learn more
+or install **Expo Go** on your phone, run `npm start`, and scan the QR code.
 
-To learn more about developing your project with Expo, look at the following resources:
+### environment variables
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+create a `.env` file (already gitignored):
 
-## Join the community
+```
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_...
+CLERK_SECRET_KEY=sk_...
+```
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+get your keys at [clerk.com](https://clerk.com). you'll also need a project on [expo.dev](https://expo.dev) for production push notifications.
