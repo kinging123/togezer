@@ -1,6 +1,3 @@
--- Enable UUID generation
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- profiles — Clerk user ID is the primary key
 CREATE TABLE profiles (
   id           text PRIMARY KEY,
@@ -14,7 +11,7 @@ CREATE TABLE profiles (
 
 -- habits
 CREATE TABLE habits (
-  id            uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id       text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   title         text NOT NULL,
   emoji         text,
@@ -27,7 +24,7 @@ CREATE TABLE habits (
 
 -- check_ins — checked_date is DATE (not TIMESTAMP) for timezone-safe streak counting
 CREATE TABLE check_ins (
-  id           uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   habit_id     uuid NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
   user_id      text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   checked_date date NOT NULL,
@@ -40,7 +37,7 @@ CREATE TABLE check_ins (
 
 -- friendships — canonical ordering enforces no duplicate pairs
 CREATE TABLE friendships (
-  id         uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_a_id  text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   user_b_id  text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -50,7 +47,7 @@ CREATE TABLE friendships (
 
 -- invite_codes
 CREATE TABLE invite_codes (
-  id          uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   code        text UNIQUE NOT NULL,
   created_by  text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   accepted_by text REFERENCES profiles(id) ON DELETE SET NULL,
@@ -60,7 +57,7 @@ CREATE TABLE invite_codes (
 
 -- nudges — schema defined now, feature deferred
 CREATE TABLE nudges (
-  id           uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   from_user_id text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   to_user_id   text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   habit_id     uuid NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
@@ -70,7 +67,7 @@ CREATE TABLE nudges (
 
 -- reactions — schema defined now, feature deferred
 CREATE TABLE reactions (
-  id          uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   check_in_id uuid NOT NULL REFERENCES check_ins(id) ON DELETE CASCADE,
   user_id     text NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   emoji       text NOT NULL,
