@@ -71,7 +71,8 @@
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1"
-    }
+    },
+    "testPathIgnorePatterns": ["/node_modules/", "/__tests__/test-utils\\.tsx"]
   },
   "private": true
 }
