@@ -5,6 +5,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    '^react-native$': '<rootDir>/jest.mocks/react-native.js',
   },
   transform: {
     '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',
