@@ -10,13 +10,9 @@ export function makeSupabaseClient(getToken: () => Promise<string | null>) {
     global: {
       fetch: async (url, options = {}) => {
         const token = await getToken()
-        return fetch(url, {
-          ...options,
-          headers: {
-            ...(options.headers as Record<string, string>),
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        })
+        const headers = new Headers(options.headers)
+        if (token) headers.set('Authorization', `Bearer ${token}`)
+        return fetch(url, { ...options, headers })
       },
     },
   })
