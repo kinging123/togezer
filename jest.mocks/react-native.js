@@ -1,3 +1,4 @@
+// Minimal RN stub for Jest (testEnvironment: 'node'). Add primitives here when new components are tested.
 const React = require('react')
 
 const Platform = {

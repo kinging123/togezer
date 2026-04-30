@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: Colors.ink,
     borderRadius: Radii.pill,
-    paddingVertical: 11,
+    paddingVertical: 11, // intentional: matches auth input visual weight
     paddingHorizontal: Spacing.s4,
     backgroundColor: Colors.bg,
     marginTop: Spacing.s3,

@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native'
 
 jest.mock('@/components/Button', () => ({
   Button: ({ label, onPress, disabled }: { label: string; onPress: () => void; disabled?: boolean }) => {
+    // require instead of import: jest.mock is hoisted above imports, so dynamic require avoids the TDZ
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { Pressable, Text } = require('react-native')
     return (
