@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Pressable,
   SafeAreaView,
@@ -16,6 +16,11 @@ import { useInviteCode } from '@/features/friends/hooks/useInviteCode'
 export default function InviteScreen() {
   const { data, isLoading, isError, refetch } = useInviteCode()
   const [copied, setCopied] = useState(false)
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => {
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+  }, [])
 
   const url = data?.code ? `https://togezer.vercel.app/j/${data.code}` : null
   const displayUrl = data?.code ? `togezer.vercel.app/j/${data.code}` : null
@@ -23,8 +28,9 @@ export default function InviteScreen() {
   async function handleCopy() {
     if (!url) return
     await Clipboard.setStringAsync(url)
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    copyTimerRef.current = setTimeout(() => setCopied(false), 2000)
   }
 
   async function handleShare() {
@@ -139,7 +145,7 @@ const styles = StyleSheet.create({
   },
   cardLblRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.s2 },
   copiedBadge: {
-    backgroundColor: Colors.red,
+    backgroundColor: Colors.mint,
     borderRadius: Radii.pill,
     paddingHorizontal: Spacing.s2,
     paddingVertical: 2,
@@ -148,7 +154,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.mono,
     fontSize: 9,
     fontWeight: '700',
-    color: Colors.bg,
+    color: Colors.ink,
   },
   urlText: {
     fontFamily: Fonts.mono,
@@ -175,7 +181,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.s2,
     alignItems: 'center',
   },
-  copyBtnCopied: { backgroundColor: Colors.red },
+  copyBtnCopied: { backgroundColor: Colors.mint },
   copyBtnLabel: {
     fontFamily: Fonts.displaySemiBold,
     fontSize: FontSizes.small,
