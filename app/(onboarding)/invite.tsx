@@ -73,7 +73,7 @@ export default function InviteScreen() {
               onPress={handleCopy}
               disabled={isLoading || isError}
             >
-              <Text style={styles.copyBtnLabel}>{copied ? 'copied ✓' : 'copy'}</Text>
+              <Text style={[styles.copyBtnLabel, copied && styles.copyBtnLabelCopied]}>{copied ? 'copied ✓' : 'copy'}</Text>
             </Pressable>
             <Pressable
               style={[styles.shareBtn, (isLoading || isError) && styles.btnDisabled]}
@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.small,
     color: Colors.bg,
   },
+  copyBtnLabelCopied: { color: Colors.ink },
   shareBtn: {
     flex: 1,
     borderWidth: 2,
