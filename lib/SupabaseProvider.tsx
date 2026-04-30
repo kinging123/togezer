@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react'
+import React, { createContext, useContext, useMemo, useRef } from 'react'
 import { useSession } from '@clerk/expo'
 import { makeSupabaseClient, type SupabaseClient } from './supabase'
 
@@ -7,12 +7,15 @@ const SupabaseContext = createContext<SupabaseClient | null>(null)
 export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const { session } = useSession()
 
+  const sessionRef = useRef(session)
+  sessionRef.current = session
+
   const client = useMemo(
     () =>
       makeSupabaseClient(
-        () => session?.getToken({ template: 'supabase' }) ?? Promise.resolve(null)
+        () => sessionRef.current?.getToken({ template: 'supabase' }) ?? Promise.resolve(null)
       ),
-    [session]
+    [] // stable client; ref is always current when getToken is called
   )
 
   return (
