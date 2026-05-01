@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { router } from 'expo-router'
 import { useAuth, useSession } from '@clerk/expo'
 import { useSupabase } from '@/lib/SupabaseProvider'
 import { queryClient } from '@/lib/queryClient'
@@ -49,8 +48,8 @@ export function usePostSignUp() {
       await AsyncStorage.removeItem('pendingInvite')
     }
 
-    // 4. Continue to onboarding
-    router.replace('/(onboarding)/pick-habit')
+    // Navigation is handled by the routing guard in app/index.tsx —
+    // once isSignedIn=true and !hasHabit it redirects to pick-habit.
   }
 
   return { handlePostSignUp }
