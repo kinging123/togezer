@@ -20,7 +20,14 @@ export function usePostSignUp() {
       },
       { onConflict: 'id', ignoreDuplicates: true }
     )
-    if (error) throw error
+    // On web, clerk.session.getToken() may return null immediately after
+    // setActive() while the session token is still being fetched — the upsert
+    // runs without auth and gets a 403. Don't throw: useCreateHabit upserts
+    // the profile as a safety net once the session is fully ready.
+    if (error) {
+      console.warn('[handlePostSignUp] profile upsert deferred:', error.code)
+      return
+    }
 
     // 2. Invalidate profile cache
     queryClient.invalidateQueries({ queryKey: ['profile', userId] })
