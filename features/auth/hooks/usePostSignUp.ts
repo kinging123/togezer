@@ -12,12 +12,15 @@ export function usePostSignUp() {
   async function handlePostSignUp(displayName: string) {
     // 1. Create profile row (username defaults to display name — user can edit later)
     const username = displayName.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000)
-    const { error } = await sb.from('profiles').insert({
-      id: userId!,
-      username,
-      display_name: displayName,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    })
+    const { error } = await sb.from('profiles').upsert(
+      {
+        id: userId!,
+        username,
+        display_name: displayName,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      },
+      { onConflict: 'id', ignoreDuplicates: true }
+    )
     if (error) throw error
 
     // 2. Invalidate profile cache
