@@ -18,6 +18,7 @@ import { tokenCache } from '@/lib/clerk-token-cache'
 import { queryClient } from '@/lib/queryClient'
 import { SupabaseProvider } from '@/lib/SupabaseProvider'
 import { useRegisterPushToken } from '@/features/notifications/hooks/useRegisterPushToken'
+import { useHasHabit } from '@/features/habits/hooks/useHasHabit'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -27,25 +28,32 @@ function AppServices() {
 }
 
 // Single source of truth for auth-driven navigation.
-// Group layouts guard with `null` to prevent flash but do not navigate —
-// only this effect navigates, preventing competing router.replace calls.
+// Navigates directly to the final destination — never routes through "/"
+// because router.replace('/') from within the (auth) stack resolves to
+// (auth)/index.tsx (groups are transparent in URL space), not app/index.tsx.
 function AuthNavigation() {
   const { isSignedIn, isLoaded } = useAuth()
+  const { hasHabit, isLoading: habitLoading } = useHasHabit()
   const segments = useSegments()
   const router = useRouter()
 
   useEffect(() => {
     if (!isLoaded) return
 
-    const inAuth = segments[0] === '(auth)'
+    const inAuth       = segments[0] === '(auth)'
+    const inOnboarding = segments[0] === '(onboarding)'
+    const inApp        = segments[0] === '(app)'
 
-    if (!isSignedIn && !inAuth) {
+    if (!isSignedIn && (inOnboarding || inApp)) {
       router.replace('/(auth)')
-    } else if (isSignedIn && inAuth) {
-      // Let app/index.tsx decide between onboarding and app
-      router.replace('/')
+      return
     }
-  }, [isLoaded, isSignedIn, segments])
+
+    if (isSignedIn && inAuth) {
+      if (habitLoading) return
+      router.replace(hasHabit ? '/(app)' : '/(onboarding)/pick-habit')
+    }
+  }, [isLoaded, isSignedIn, segments, hasHabit, habitLoading])
 
   return null
 }
