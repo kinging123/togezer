@@ -1,11 +1,10 @@
-import { Redirect, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 import { useAuth } from '@clerk/expo'
 
 export default function OnboardingLayout() {
   const { isSignedIn, isLoaded } = useAuth()
 
-  if (!isLoaded) return null
-  if (!isSignedIn) return <Redirect href="/" />
+  if (!isLoaded || !isSignedIn) return null
 
   return <Stack screenOptions={{ headerShown: false }} />
 }

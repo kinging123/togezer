@@ -1,4 +1,4 @@
-import { ClerkProvider } from '@clerk/expo'
+import { ClerkProvider, useAuth } from '@clerk/expo'
 import {
   JetBrainsMono_400Regular,
   JetBrainsMono_500Medium,
@@ -11,7 +11,7 @@ import {
 } from '@expo-google-fonts/space-grotesk'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
-import { Stack } from 'expo-router'
+import { Stack, useRouter, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 import { tokenCache } from '@/lib/clerk-token-cache'
@@ -23,6 +23,30 @@ SplashScreen.preventAutoHideAsync()
 
 function AppServices() {
   useRegisterPushToken()
+  return null
+}
+
+// Single source of truth for auth-driven navigation.
+// Group layouts guard with `null` to prevent flash but do not navigate —
+// only this effect navigates, preventing competing router.replace calls.
+function AuthNavigation() {
+  const { isSignedIn, isLoaded } = useAuth()
+  const segments = useSegments()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoaded) return
+
+    const inAuth = segments[0] === '(auth)'
+
+    if (!isSignedIn && !inAuth) {
+      router.replace('/(auth)')
+    } else if (isSignedIn && inAuth) {
+      // Let app/index.tsx decide between onboarding and app
+      router.replace('/')
+    }
+  }, [isLoaded, isSignedIn, segments])
+
   return null
 }
 
@@ -51,6 +75,7 @@ export default function RootLayout() {
     >
       <SupabaseProvider>
         <QueryClientProvider client={queryClient}>
+          <AuthNavigation />
           <AppServices />
           <Stack screenOptions={{ headerShown: false }} />
         </QueryClientProvider>
