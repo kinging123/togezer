@@ -11,7 +11,6 @@ function toLocalDateString() {
 
 type CheckInInput = {
   habitId: string
-  type: 'done' | 'grace'
   photoUrl?: string
   note?: string
 }
@@ -21,14 +20,14 @@ export function useCheckIn() {
   const { userId } = useAuth()
 
   return useMutation({
-    mutationFn: async ({ habitId, type, photoUrl, note }: CheckInInput) => {
+    mutationFn: async ({ habitId, photoUrl, note }: CheckInInput) => {
       const { data, error } = await sb
         .from('check_ins')
         .insert({
           habit_id: habitId,
           user_id: userId!,
           checked_date: toLocalDateString(),
-          type,
+          type: 'done',
           photo_url: photoUrl ?? null,
           note: note ?? null,
         })
@@ -38,7 +37,7 @@ export function useCheckIn() {
       return data
     },
     onSuccess: (_, { habitId }) => {
-      queryClient.invalidateQueries({ queryKey: [...checkInKeys.todayStatus(), habitId] })
+      queryClient.invalidateQueries({ queryKey: checkInKeys.status(habitId) })
       queryClient.invalidateQueries({ queryKey: checkInKeys.friendsToday() })
       queryClient.invalidateQueries({ queryKey: habitKeys.list() })
     },
