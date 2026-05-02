@@ -1,7 +1,9 @@
 import type { StreakStatus } from '../types'
 
-export type { StreakStatus }
-
+// Uses a pending-grace algorithm: missed days are held in a buffer and only
+// committed as consumed grace when a subsequent check-in is found on the
+// other side. Trailing missed days at the end of the walk are never committed,
+// so graceUsedThisWeek reflects grace that actually saved a streak connection.
 export function computeStreakStatus(
   checkIns: { checked_date: string }[],
   graceDaysPW: number,

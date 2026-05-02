@@ -80,15 +80,12 @@ function computeStreakStatus(
    - **yesterday** — if not (today is still open, not a missed day)
 4. Stop walking when the cursor goes before `habitCreatedAt` — days before the habit existed are not missed days.
 5. For each cursor day:
-   - **In the set** → `streak++`
-   - **Not in the set** (missed past day):
-     - Find the Sun–Sat week containing this day
-     - Count how many missed days have already been attributed to grace in that week
-     - If `count < graceDaysPW` → grace absorbs it, continue (no `streak++`)
-     - If `count >= graceDaysPW` → streak is broken, stop
-6. `graceUsedThisWeek` = grace days consumed in the Sun–Sat week containing `today`.
+   - **In the set** → commit any pending grace days for this run, then `streak++`
+   - **Not in the set** (missed past day) → add to a pending buffer if the weekly budget allows (committed + pending < graceDaysPW), else break
+6. Pending grace days are only committed when a check-in is found on both sides of the gap. Trailing missed days at the end of the walk are never committed.
+7. `graceUsedThisWeek` = committed (not pending) grace days in the Sun–Sat week containing `today`.
 
-Grace days within a week are allocated greedily from most-recent to oldest (because we walk backward). This maximises streak length, which matches user expectations.
+This **pending-grace** approach means `graceUsedThisWeek` reflects grace that actually saved a streak connection, not trailing misses. If a streak breaks, `graceUsedThisWeek` may be 0 — the grace day is still available for the next run.
 
 ---
 
