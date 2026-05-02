@@ -64,11 +64,14 @@ describe('computeStreakStatus', () => {
     expect(result.graceUsedThisWeek).toBe(1)
   })
 
-  it('breaks the streak when grace is exhausted', () => {
-    // missed yesterday AND 2 days ago; only 1 grace/week
-    // walk: today=done(1), yesterday=miss(grace used→1), 04-30=miss(grace exhausted→break)
+  it('breaks the streak when two consecutive misses exceed the grace budget', () => {
+    // 2 consecutive missed days (05-01, 04-30) with only 1 grace — pending buffer fills before
+    // reaching the 04-29 check-in, so grace is never committed and streak stays at 1
     const result = computeStreakStatus(
-      [{ checked_date: '2026-05-02' }],
+      [
+        { checked_date: '2026-05-02' },
+        { checked_date: '2026-04-29' },
+      ],
       1,
       CREATED_AT,
       TODAY,
