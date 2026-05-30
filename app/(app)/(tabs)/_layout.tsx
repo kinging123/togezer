@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { PhosphorIcon } from '@/components/PhosphorIcon'
-import { Colors, Fonts } from '@/constants/theme'
+import { Colors } from '@/constants/theme'
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets()
@@ -10,38 +10,32 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        // Icons-only tab bar — the house/person glyphs are self-explanatory.
+        tabBarShowLabel: false,
         tabBarActiveTintColor: Colors.red,
         tabBarInactiveTintColor: Colors.ink3,
         tabBarStyle: {
           backgroundColor: Colors.bg,
           borderTopWidth: 2,
           borderTopColor: Colors.ink,
-          height: 60 + insets.bottom,
-          paddingTop: 10,
-          paddingBottom: insets.bottom + 10,
+          height: 56 + insets.bottom,
+          paddingTop: 8,
+          paddingBottom: insets.bottom + 8,
         },
-        tabBarLabelStyle: {
-          fontFamily: Fonts.mono,
-          fontSize: 10,
-          lineHeight: 14,
-          letterSpacing: 1,
-          textTransform: 'lowercase',
-        },
-        tabBarIconStyle: { marginBottom: 2 },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'today',
-          tabBarIcon: ({ color, size }) => <PhosphorIcon name="house" color={color} size={size} />,
+          tabBarIcon: ({ color }) => <PhosphorIcon name="house" color={color} size={28} />,
         }}
       />
       <Tabs.Screen
         name="you"
         options={{
           title: 'you',
-          tabBarIcon: ({ color, size }) => <PhosphorIcon name="user" color={color} size={size} />,
+          tabBarIcon: ({ color }) => <PhosphorIcon name="user" color={color} size={28} />,
         }}
       />
     </Tabs>
