@@ -61,11 +61,11 @@ describe('YouScreen', () => {
     expect(getByText('sign out')).toBeTruthy()
   })
 
-  it('opens the edit-habit modal when the habit card is tapped', () => {
+  it('opens habit detail when the habit card is tapped', () => {
     const { router } = require('expo-router')
     const { getByTestId } = render(<YouScreen />)
-    fireEvent.press(getByTestId('edit-habit'))
-    expect(router.push).toHaveBeenCalledWith('/edit-habit/h1')
+    fireEvent.press(getByTestId('habit-card'))
+    expect(router.push).toHaveBeenCalledWith('/habits/h1')
   })
 
   it('shows a loader until profile and habit are ready', () => {

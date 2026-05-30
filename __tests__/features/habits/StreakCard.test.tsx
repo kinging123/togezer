@@ -23,6 +23,12 @@ describe('StreakCard', () => {
     expect(mockPush).toHaveBeenCalledWith('/check-in/h1')
   })
 
+  it('opens habit detail when the card body is tapped', () => {
+    const { getByTestId } = render(<StreakCard habit={habit} status={baseStatus} />)
+    fireEvent.press(getByTestId('streak-detail'))
+    expect(mockPush).toHaveBeenCalledWith('/habits/h1')
+  })
+
   it('shows a done state and no CTA when already checked in', () => {
     const { queryByTestId, getByText } = render(
       <StreakCard habit={habit} status={{ ...baseStatus, hasCheckedInToday: true }} />

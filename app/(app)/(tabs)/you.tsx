@@ -61,16 +61,16 @@ function YouBody({ profile, habit }: { profile: Profile; habit: Habit }) {
 
         <Text style={styles.sectionLabel}>your habit</Text>
         <Pressable
-          testID="edit-habit"
+          testID="habit-card"
           style={styles.habitCard}
-          onPress={() => router.push(`/edit-habit/${habit.id}`)}
+          onPress={() => router.push(`/habits/${habit.id}`)}
         >
           <Text style={styles.habitEmoji}>{habit.emoji ?? '✦'}</Text>
           <View style={styles.flex}>
             <Text style={styles.habitTitle}>{habit.title}</Text>
             <Text style={styles.habitStreak}>{streak} day streak</Text>
           </View>
-          <Text style={styles.editLabel}>edit</Text>
+          <Text style={styles.editLabel}>›</Text>
         </Pressable>
 
         <View style={styles.spacer} />

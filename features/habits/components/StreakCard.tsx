@@ -10,13 +10,15 @@ export function StreakCard({ habit, status }: Props) {
   const graceLeft = Math.max(0, status.graceTotalPW - status.graceUsedThisWeek)
   return (
     <View style={styles.card}>
-      <View style={styles.top}>
-        <Text style={styles.emoji}>{habit.emoji ?? '✦'}</Text>
-        <Text style={styles.habit}>{habit.title}</Text>
-      </View>
-      <Text style={styles.num}>{status.streak}</Text>
-      <Text style={styles.cap}>day streak</Text>
-      <Text style={styles.grace}>◆ {graceLeft} grace left this week</Text>
+      <Pressable testID="streak-detail" onPress={() => router.push(`/habits/${habit.id}`)}>
+        <View style={styles.top}>
+          <Text style={styles.emoji}>{habit.emoji ?? '✦'}</Text>
+          <Text style={styles.habit}>{habit.title}</Text>
+        </View>
+        <Text style={styles.num}>{status.streak}</Text>
+        <Text style={styles.cap}>day streak</Text>
+        <Text style={styles.grace}>◆ {graceLeft} grace left this week</Text>
+      </Pressable>
       {status.hasCheckedInToday ? (
         <View style={styles.done}>
           <Text style={styles.doneLabel}>checked in ✓</Text>
