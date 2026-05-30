@@ -34,11 +34,6 @@ export default function WelcomeScreen() {
             onPress={() => router.push('/(auth)/sign-up')}
             variant="primary"
           />
-          <Button
-            label="i already have an account"
-            onPress={() => router.push('/(auth)/sign-in')}
-            variant="ghost"
-          />
         </View>
 
       </View>

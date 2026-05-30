@@ -1,11 +1,9 @@
 import { useOAuth, useUser } from '@clerk/expo'
-import { router } from 'expo-router'
 import { usePostSignUp } from '@/features/auth/hooks/usePostSignUp'
 import * as WebBrowser from 'expo-web-browser'
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import Svg, { Path } from 'react-native-svg'
-import { Button } from '@/components/Button'
 import { Colors, Fonts, FontSizes, Spacing } from '@/constants/theme'
 
 WebBrowser.maybeCompleteAuthSession()
@@ -63,9 +61,9 @@ export default function SignUpScreen() {
         <View style={{ flex: 1 }} />
 
         <View style={styles.content}>
-          <Text style={styles.label}>sign up</Text>
+          <Text style={styles.label}>welcome</Text>
           <Text style={styles.headline}>{'one tap. no\npassword drama.'}</Text>
-          <Text style={styles.body}>we just need a name and a face. you pick which.</Text>
+          <Text style={styles.body}>new here or coming back — same tap. we just need a name and a face.</Text>
 
           <View style={styles.socialStack}>
             {SOCIAL.map(({ label, Icon, ink, onPress }) => (
@@ -87,14 +85,6 @@ export default function SignUpScreen() {
               </Pressable>
             ))}
           </View>
-
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>or</Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          <Button label="use email" onPress={() => router.push('/(auth)/sign-up-email')} variant="secondary" />
         </View>
 
         <View style={{ flex: 1 }} />
@@ -178,24 +168,6 @@ const styles = StyleSheet.create({
   },
   socialLabelInk: {
     color: Colors.bg,
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.s2,
-    marginVertical: 6,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.line,
-  },
-  dividerText: {
-    fontFamily: Fonts.mono,
-    fontSize: FontSizes.label,
-    color: Colors.ink3,
-    textTransform: 'uppercase',
-    letterSpacing: FontSizes.label * 0.1,
   },
   footer: {
     fontFamily: Fonts.body,
