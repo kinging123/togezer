@@ -13,14 +13,7 @@ import { router } from 'expo-router'
 import { Button } from '@/components/Button'
 import { Colors, Fonts, FontSizes, Radii, Spacing } from '@/constants/theme'
 import { useCreateHabit } from '@/features/habits/hooks/useCreateHabit'
-
-const PRESETS = [
-  { emoji: '🏃', title: 'move body' },
-  { emoji: '📖', title: 'read 20 min' },
-  { emoji: '📓', title: 'journal' },
-  { emoji: '💧', title: 'drink water' },
-  { emoji: '🧘', title: 'meditate' },
-]
+import { HABIT_PRESETS as PRESETS } from '@/features/habits/presets'
 
 export default function PickHabitScreen() {
   const [title, setTitle] = useState('')

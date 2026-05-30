@@ -1,4 +1,5 @@
-import { SafeAreaView, ScrollView, View, Text, ActivityIndicator, StyleSheet } from 'react-native'
+import { SafeAreaView, ScrollView, View, Text, Pressable, ActivityIndicator, StyleSheet } from 'react-native'
+import { router } from 'expo-router'
 import { Avatar } from '@/components/Avatar'
 import { SignOutButton } from '@/features/auth/components/SignOutButton'
 import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser'
@@ -59,13 +60,18 @@ function YouBody({ profile, habit }: { profile: Profile; habit: Habit }) {
         </View>
 
         <Text style={styles.sectionLabel}>your habit</Text>
-        <View style={styles.habitCard}>
+        <Pressable
+          testID="edit-habit"
+          style={styles.habitCard}
+          onPress={() => router.push(`/edit-habit/${habit.id}`)}
+        >
           <Text style={styles.habitEmoji}>{habit.emoji ?? '✦'}</Text>
           <View style={styles.flex}>
             <Text style={styles.habitTitle}>{habit.title}</Text>
             <Text style={styles.habitStreak}>{streak} day streak</Text>
           </View>
-        </View>
+          <Text style={styles.editLabel}>edit</Text>
+        </Pressable>
 
         <View style={styles.spacer} />
         <SignOutButton />
@@ -123,4 +129,5 @@ const styles = StyleSheet.create({
   habitEmoji: { fontSize: 28 },
   habitTitle: { fontFamily: Fonts.displaySemiBold, fontSize: FontSizes.body, color: Colors.ink },
   habitStreak: { fontFamily: Fonts.mono, fontSize: FontSizes.label, color: Colors.ink3, marginTop: 2 },
+  editLabel: { fontFamily: Fonts.mono, fontSize: FontSizes.label, textTransform: 'uppercase', letterSpacing: 1, color: Colors.redInk },
 })

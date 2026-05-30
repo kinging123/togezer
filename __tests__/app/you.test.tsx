@@ -1,5 +1,6 @@
-import { render } from '@testing-library/react-native'
+import { render, fireEvent } from '@testing-library/react-native'
 
+jest.mock('expo-router', () => ({ router: { push: jest.fn() } }))
 jest.mock('@/features/auth/hooks/useCurrentUser', () => ({ useCurrentUser: jest.fn() }))
 jest.mock('@/features/habits/hooks/useHabits', () => ({ useHabits: jest.fn() }))
 jest.mock('@/features/check-in/hooks/useHabitStatus', () => ({ useHabitStatus: jest.fn() }))
@@ -58,6 +59,13 @@ describe('YouScreen', () => {
     const { getByText } = render(<YouScreen />)
     expect(getByText('read 20 min')).toBeTruthy()
     expect(getByText('sign out')).toBeTruthy()
+  })
+
+  it('opens the edit-habit modal when the habit card is tapped', () => {
+    const { router } = require('expo-router')
+    const { getByTestId } = render(<YouScreen />)
+    fireEvent.press(getByTestId('edit-habit'))
+    expect(router.push).toHaveBeenCalledWith('/edit-habit/h1')
   })
 
   it('shows a loader until profile and habit are ready', () => {
