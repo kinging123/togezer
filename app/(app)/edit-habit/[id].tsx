@@ -1,8 +1,15 @@
 import { View, ActivityIndicator, SafeAreaView, StyleSheet } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 import { useHabit } from '@/features/habits/hooks/useHabit'
+import { useHabitStatus } from '@/features/check-in/hooks/useHabitStatus'
 import { EditHabitForm } from '@/features/habits/components/EditHabitForm'
 import { Colors } from '@/constants/theme'
+import type { Habit } from '@/features/habits/types'
+
+function Loaded({ habit }: { habit: Habit }) {
+  const { data: status } = useHabitStatus(habit)
+  return <EditHabitForm habit={habit} currentStreak={status?.streak ?? 0} />
+}
 
 export default function EditHabitModal() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -10,7 +17,7 @@ export default function EditHabitModal() {
   return (
     <SafeAreaView style={styles.safe}>
       {habit ? (
-        <EditHabitForm habit={habit} />
+        <Loaded habit={habit} />
       ) : (
         <View style={styles.center}>
           <ActivityIndicator />

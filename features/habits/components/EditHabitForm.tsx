@@ -3,40 +3,58 @@ import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput,
 import { router } from 'expo-router'
 import { Button } from '@/components/Button'
 import { Colors, Fonts, FontSizes, Radii, Spacing } from '@/constants/theme'
-import { useUpdateHabit } from '../hooks/useUpdateHabit'
+import { useReplaceHabit } from '../hooks/useReplaceHabit'
 import { HABIT_PRESETS } from '../presets'
 import type { Habit } from '../types'
 
-export function EditHabitForm({ habit }: { habit: Habit }) {
+export function EditHabitForm({ habit, currentStreak }: { habit: Habit; currentStreak: number }) {
   const [title, setTitle] = useState(habit.title)
   const [emoji, setEmoji] = useState<string | null>(habit.emoji)
   const [activePreset, setActivePreset] = useState<string | null>(null)
+  const [confirming, setConfirming] = useState(false)
   const [error, setError] = useState('')
-  const { mutateAsync, isPending } = useUpdateHabit()
+  const { mutateAsync, isPending } = useReplaceHabit()
+
+  const trimmed = title.trim()
+  const hasChanges = trimmed !== habit.title || emoji !== habit.emoji
+  const willResetStreak = currentStreak > 0
 
   function handlePresetTap(preset: (typeof HABIT_PRESETS)[number]) {
     setTitle(preset.title)
     setEmoji(preset.emoji)
     setActivePreset(preset.title)
+    setConfirming(false)
     setError('')
   }
 
   function handleTitleChange(text: string) {
     setTitle(text)
     setActivePreset(null)
+    setConfirming(false)
     setError('')
   }
 
-  async function handleSave() {
-    const trimmed = title.trim()
-    if (!trimmed || isPending) return
+  async function commit() {
     setError('')
     try {
-      await mutateAsync({ id: habit.id, title: trimmed, emoji })
+      await mutateAsync({ oldHabit: habit, title: trimmed, emoji })
       router.back()
     } catch {
       setError('something went wrong')
     }
+  }
+
+  function handleSave() {
+    if (!trimmed || isPending) return
+    if (!hasChanges) {
+      router.back() // nothing changed — leave the streak intact
+      return
+    }
+    if (willResetStreak && !confirming) {
+      setConfirming(true) // warn before resetting
+      return
+    }
+    commit()
   }
 
   return (
@@ -78,15 +96,34 @@ export function EditHabitForm({ habit }: { habit: Habit }) {
 
         <View style={styles.spacer} />
 
-        <Button
-          label={isPending ? '…' : 'save'}
-          onPress={handleSave}
-          variant="primary"
-          disabled={!title.trim() || isPending}
-        />
-        <Pressable testID="edit-cancel" onPress={() => router.back()}>
-          <Text style={styles.cancel}>cancel</Text>
-        </Pressable>
+        {confirming ? (
+          <View style={styles.warnBlock}>
+            <Text testID="reset-warning" style={styles.warnText}>
+              changing your habit starts fresh — your {currentStreak}-day streak will reset.
+            </Text>
+            <Button
+              label={isPending ? '…' : 'reset & save'}
+              onPress={commit}
+              variant="primary"
+              disabled={isPending}
+            />
+            <Pressable testID="keep-editing" onPress={() => setConfirming(false)}>
+              <Text style={styles.cancel}>keep my streak</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <>
+            <Button
+              label={isPending ? '…' : 'save'}
+              onPress={handleSave}
+              variant="primary"
+              disabled={!trimmed || isPending}
+            />
+            <Pressable testID="edit-cancel" onPress={() => router.back()}>
+              <Text style={styles.cancel}>cancel</Text>
+            </Pressable>
+          </>
+        )}
       </View>
     </KeyboardAvoidingView>
   )
@@ -133,4 +170,17 @@ const styles = StyleSheet.create({
   chipPlusActive: { color: Colors.bg, opacity: 0.6 },
   spacer: { flex: 1, minHeight: Spacing.s6 },
   cancel: { fontFamily: Fonts.displayMedium, fontSize: FontSizes.small, color: Colors.ink3, textAlign: 'center', marginTop: Spacing.s4 },
+  warnBlock: { gap: Spacing.s3 },
+  warnText: {
+    fontFamily: Fonts.body,
+    fontSize: FontSizes.small,
+    color: Colors.redInk,
+    letterSpacing: -0.2,
+    lineHeight: FontSizes.small * 1.4,
+    backgroundColor: Colors.bg2,
+    borderWidth: 1.5,
+    borderColor: Colors.redInk,
+    borderRadius: Radii.md,
+    padding: Spacing.s3,
+  },
 })
