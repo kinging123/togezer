@@ -11,24 +11,48 @@ const habit = {
   id: 'h1', user_id: 'me', title: 'read 20 min', emoji: '📖', cadence: 'daily',
   reminder_time: null, grace_days_pw: 1, is_archived: false, created_at: '2026-01-01',
 }
-const status = { streak: 7, graceUsedThisWeek: 0, graceTotalPW: 1, hasCheckedInToday: false }
+const freshStatus = { streak: 0, graceUsedThisWeek: 0, graceTotalPW: 1, hasCheckedInToday: false }
 
 describe('CheckInSheet', () => {
   beforeEach(() => { mockMutateAsync.mockClear(); mockMutateAsync.mockResolvedValue({}) })
 
-  it('submits with the note and shows the ticked-up streak', async () => {
-    const { getByTestId, getByText } = render(<CheckInSheet habit={habit} status={status} />)
+  it('submits with the note and shows the ticked-up streak (0 -> 1)', async () => {
+    const { getByTestId, getByText } = render(<CheckInSheet habit={habit} status={freshStatus} />)
     fireEvent.changeText(getByTestId('note-input'), '  did it  ')
-    // The confirm handler is async; flush its state update inside act.
     await act(async () => { fireEvent.press(getByTestId('confirm')) })
     expect(getByTestId('checkin-success')).toBeTruthy()
     expect(mockMutateAsync).toHaveBeenCalledWith({ habitId: 'h1', note: 'did it' })
-    expect(getByText('8')).toBeTruthy() // 7 -> 8
+    expect(getByText('0')).toBeTruthy() // old (struck through)
+    expect(getByText('1')).toBeTruthy() // new
+  })
+
+  it('keeps the snapshot even if the live status advances after check-in', async () => {
+    // useCheckIn invalidates the status query; the parent re-renders CheckInSheet
+    // with an updated status (now counting today). The success view must keep
+    // showing the snapshot (0 -> 1), not re-derive from the new status (1 -> 2).
+    const { getByTestId, getByText, queryByText, rerender } = render(
+      <CheckInSheet habit={habit} status={freshStatus} />
+    )
+    await act(async () => { fireEvent.press(getByTestId('confirm')) })
+    rerender(
+      <CheckInSheet habit={habit} status={{ ...freshStatus, streak: 1, hasCheckedInToday: true }} />
+    )
+    expect(getByText('1')).toBeTruthy()
+    expect(queryByText('2')).toBeNull()
+  })
+
+  it('ticks up correctly from a non-zero streak (7 -> 8)', async () => {
+    const { getByTestId, getByText } = render(
+      <CheckInSheet habit={habit} status={{ ...freshStatus, streak: 7 }} />
+    )
+    await act(async () => { fireEvent.press(getByTestId('confirm')) })
+    expect(getByText('7')).toBeTruthy()
+    expect(getByText('8')).toBeTruthy()
   })
 
   it('treats a 23505 unique violation as already-done success', async () => {
     mockMutateAsync.mockRejectedValueOnce({ code: '23505' })
-    const { getByTestId } = render(<CheckInSheet habit={habit} status={status} />)
+    const { getByTestId } = render(<CheckInSheet habit={habit} status={freshStatus} />)
     await act(async () => { fireEvent.press(getByTestId('confirm')) })
     expect(getByTestId('checkin-success')).toBeTruthy()
   })

@@ -11,18 +11,28 @@ type Props = { habit: Habit; status: StreakStatus }
 export function CheckInSheet({ habit, status }: Props) {
   const [note, setNote] = useState('')
   const [phase, setPhase] = useState<'form' | 'success'>('form')
+  // Snapshot of the streak after today's check-in, captured at confirm time.
+  // We can't read status.streak in the success view: useCheckIn invalidates the
+  // status query, so by the time success renders the live value has already
+  // advanced — showing e.g. 1→2 instead of 0→1.
+  const [newStreak, setNewStreak] = useState(0)
   const [error, setError] = useState('')
   const { mutateAsync, isPending } = useCheckIn()
 
   async function handleConfirm() {
     if (isPending) return
     setError('')
+    // status reflects pre-check-in state here (today not yet counted unless this
+    // is the rare already-checked-in race), so this resolves to today's streak.
+    const streakWithToday = status.hasCheckedInToday ? status.streak : status.streak + 1
     try {
       const trimmed = note.trim()
       await mutateAsync({ habitId: habit.id, note: trimmed || undefined })
+      setNewStreak(streakWithToday)
       setPhase('success')
     } catch (e: any) {
       if (e?.code === '23505') {
+        setNewStreak(streakWithToday)
         setPhase('success')
         return
       }
@@ -38,8 +48,8 @@ export function CheckInSheet({ habit, status }: Props) {
         </View>
         <Text style={styles.lbl}>checked in for today</Text>
         <View style={styles.tickRow}>
-          <Text style={styles.tickOld}>{status.streak}</Text>
-          <Text style={styles.tickNew}>{status.streak + 1}</Text>
+          <Text style={styles.tickOld}>{newStreak - 1}</Text>
+          <Text style={styles.tickNew}>{newStreak}</Text>
         </View>
         <Text style={styles.cap}>{'day streak · ' + habit.title}</Text>
         <Pressable testID="success-dismiss" style={styles.confirm} onPress={() => router.back()}>
