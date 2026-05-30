@@ -10,6 +10,7 @@ import {
   SpaceGrotesk_700Bold,
 } from '@expo-google-fonts/space-grotesk'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { useFonts } from 'expo-font'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
@@ -77,17 +78,19 @@ export default function RootLayout() {
   if (!fontsLoaded && !fontError) return null
 
   return (
-    <ClerkProvider
-      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-      tokenCache={tokenCache}
-    >
-      <SupabaseProvider>
-        <QueryClientProvider client={queryClient}>
-          <AuthNavigation />
-          <AppServices />
-          <Stack screenOptions={{ headerShown: false }} />
-        </QueryClientProvider>
-      </SupabaseProvider>
-    </ClerkProvider>
+    <SafeAreaProvider>
+      <ClerkProvider
+        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+        tokenCache={tokenCache}
+      >
+        <SupabaseProvider>
+          <QueryClientProvider client={queryClient}>
+            <AuthNavigation />
+            <AppServices />
+            <Stack screenOptions={{ headerShown: false }} />
+          </QueryClientProvider>
+        </SupabaseProvider>
+      </ClerkProvider>
+    </SafeAreaProvider>
   )
 }
