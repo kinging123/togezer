@@ -51,6 +51,15 @@ const SafeAreaView = ({ children, style, testID, ...rest }) =>
 const KeyboardAvoidingView = ({ children, style, testID, ...rest }) =>
   React.createElement('View', { style, testID, ...rest }, children)
 
+const ScrollView = ({ children, style, contentContainerStyle, testID, refreshControl, ...rest }) =>
+  React.createElement('ScrollView', { style, testID, ...rest }, children)
+
+const ActivityIndicator = ({ testID, ...rest }) =>
+  React.createElement('ActivityIndicator', { testID, ...rest })
+
+const RefreshControl = ({ refreshing, onRefresh, ...rest }) =>
+  React.createElement('RefreshControl', { refreshing, onRefresh, ...rest })
+
 module.exports = {
   Platform,
   StyleSheet,
@@ -60,4 +69,7 @@ module.exports = {
   Pressable,
   SafeAreaView,
   KeyboardAvoidingView,
+  ScrollView,
+  ActivityIndicator,
+  RefreshControl,
 }
