@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react-native'
 import { useSupabase, SupabaseProvider } from '@/lib/SupabaseProvider'
 
 jest.mock('@clerk/expo', () => ({
-  useSession: () => ({ session: { getToken: jest.fn().mockResolvedValue('test-token') } }),
+  useClerk: () => ({ session: { getToken: jest.fn().mockResolvedValue('test-token') } }),
 }))
 
 describe('SupabaseProvider', () => {
