@@ -25,6 +25,7 @@ export default function AppLayout() {
       <Stack.Screen name="habits/[id]" />
       <Stack.Screen name="check-in/[habitId]" options={{ presentation: 'modal' }} />
       <Stack.Screen name="edit-habit/[id]" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="invite-friends" />
     </Stack>
   )
 }

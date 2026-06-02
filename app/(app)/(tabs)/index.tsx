@@ -58,7 +58,7 @@ function TodayBody({ habit }: { habit: Habit }) {
         {gang.length > 0 ? (
           gang.map((f) => <FriendRow key={f.profile.id} activity={f} />)
         ) : (
-          <Pressable style={styles.invite} onPress={() => router.push('/(onboarding)/invite')}>
+          <Pressable testID="invite-prompt" style={styles.invite} onPress={() => router.push('/invite-friends')}>
             <Text style={styles.inviteLabel}>bring the gang →</Text>
             <Text style={styles.inviteSub}>habits stick better with friends watching.</Text>
           </Pressable>

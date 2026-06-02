@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react-native'
+import { render, fireEvent } from '@testing-library/react-native'
 
 jest.mock('@/features/habits/hooks/useHabits', () => ({ useHabits: jest.fn() }))
 jest.mock('@/features/check-in/hooks/useHabitStatus', () => ({ useHabitStatus: jest.fn() }))
@@ -33,9 +33,12 @@ describe('TodayScreen', () => {
     expect(getByText('read 20 min')).toBeTruthy()
   })
 
-  it('shows the invite prompt when there are no friends', () => {
-    const { getByText } = render(<TodayScreen />)
+  it('shows the invite prompt when there are no friends, linking to the in-app invite', () => {
+    const { getByText, getByTestId } = render(<TodayScreen />)
     expect(getByText('bring the gang →')).toBeTruthy()
+    const { router } = require('expo-router')
+    fireEvent.press(getByTestId('invite-prompt'))
+    expect(router.push).toHaveBeenCalledWith('/invite-friends')
   })
 
   it('shows the gang with a checked-in counter', () => {
