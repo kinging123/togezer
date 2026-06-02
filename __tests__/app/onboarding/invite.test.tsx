@@ -52,14 +52,14 @@ describe('InviteScreen', () => {
 
   it('displays the invite URL', () => {
     const { getByText } = render(<InviteScreen />)
-    expect(getByText('togezer.vercel.app/j/abc1')).toBeTruthy()
+    expect(getByText('togezerapp.vercel.app/j/abc1')).toBeTruthy()
   })
 
   it('copy writes full URL to clipboard', async () => {
     const { getByText } = render(<InviteScreen />)
     fireEvent.press(getByText('copy'))
     await waitFor(() =>
-      expect(mockSetStringAsync).toHaveBeenCalledWith('https://togezer.vercel.app/j/abc1')
+      expect(mockSetStringAsync).toHaveBeenCalledWith('https://togezerapp.vercel.app/j/abc1')
     )
   })
 
@@ -67,7 +67,7 @@ describe('InviteScreen', () => {
     const { getByText } = render(<InviteScreen />)
     fireEvent.press(getByText('share →'))
     await waitFor(() =>
-      expect(mockShare).toHaveBeenCalledWith({ message: 'https://togezer.vercel.app/j/abc1' })
+      expect(mockShare).toHaveBeenCalledWith({ message: 'https://togezerapp.vercel.app/j/abc1' })
     )
   })
 

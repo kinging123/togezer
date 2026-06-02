@@ -16,8 +16,8 @@ export function InvitePanel() {
     if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
   }, [])
 
-  const url = data?.code ? `https://togezer.vercel.app/j/${data.code}` : null
-  const displayUrl = data?.code ? `togezer.vercel.app/j/${data.code}` : null
+  const url = data?.code ? `https://togezerapp.vercel.app/j/${data.code}` : null
+  const displayUrl = data?.code ? `togezerapp.vercel.app/j/${data.code}` : null
 
   async function handleCopy() {
     if (!url) return

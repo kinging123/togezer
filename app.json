@@ -11,7 +11,7 @@
     "ios": {
       "bundleIdentifier": "app.togezer",
       "supportsTablet": true,
-      "associatedDomains": ["applinks:togezer.vercel.app"]
+      "associatedDomains": ["applinks:togezerapp.vercel.app"]
     },
     "android": {
       "package": "app.togezer",
@@ -30,7 +30,7 @@
           "data": [
             {
               "scheme": "https",
-              "host": "togezer.vercel.app",
+              "host": "togezerapp.vercel.app",
               "pathPrefix": "/j/"
             }
           ]

@@ -28,7 +28,7 @@ beforeEach(() => {
 describe('InviteFriendsScreen (in-app)', () => {
   it('shows the invite link but no onboarding step label', () => {
     const { getByText, queryByText } = render(<InviteFriendsScreen />)
-    expect(getByText('togezer.vercel.app/j/abc1')).toBeTruthy()
+    expect(getByText('togezerapp.vercel.app/j/abc1')).toBeTruthy()
     expect(queryByText('step 2 of 2')).toBeNull()
     expect(queryByText('skip — go solo')).toBeNull()
   })
