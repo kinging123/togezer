@@ -1,13 +1,10 @@
 import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
-// getServerSideProps forces Vercel to register a route/function for the dynamic
-// [code] segment. Without a data method, the auto-static-optimized dynamic page
-// wasn't being matched (404 NOT_FOUND) for arbitrary codes.
-export async function getServerSideProps({ params }) {
-  return { props: { code: params?.code ?? null } }
-}
+export default function InviteRedirect() {
+  const { query } = useRouter()
+  const code = query.code
 
-export default function InviteRedirect({ code }) {
   useEffect(() => {
     if (!code) return
     window.location.href = `togezer://j/${code}`
