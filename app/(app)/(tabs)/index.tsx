@@ -1,4 +1,5 @@
-import { SafeAreaView, ScrollView, View, Text, Pressable, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native'
+import { ScrollView, View, Text, Pressable, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { useHabits } from '@/features/habits/hooks/useHabits'
 import { useHabitStatus } from '@/features/check-in/hooks/useHabitStatus'
@@ -20,7 +21,7 @@ export default function TodayScreen() {
   const habit = habits?.[0]
   if (isLoading || !habit) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
         <View style={styles.center}>
           <ActivityIndicator />
         </View>
@@ -37,7 +38,7 @@ function TodayBody({ habit }: { habit: Habit }) {
   const checkedIn = gang.filter((f) => f.status.hasCheckedInToday).length
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}

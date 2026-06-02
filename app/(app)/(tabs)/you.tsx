@@ -1,4 +1,5 @@
-import { SafeAreaView, ScrollView, View, Text, Pressable, ActivityIndicator, StyleSheet } from 'react-native'
+import { ScrollView, View, Text, Pressable, ActivityIndicator, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { Avatar } from '@/components/Avatar'
 import { SignOutButton } from '@/features/auth/components/SignOutButton'
@@ -23,7 +24,7 @@ export default function YouScreen() {
 
   if (profileLoading || habitsLoading || !profile || !habit) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
         <View style={styles.center}>
           <ActivityIndicator />
         </View>
@@ -42,7 +43,7 @@ function YouBody({ profile, habit }: { profile: Profile; habit: Habit }) {
   const friendsCount = friends?.length ?? 0
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>you</Text>
 

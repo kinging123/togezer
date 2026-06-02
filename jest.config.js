@@ -6,6 +6,7 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     '^react-native$': '<rootDir>/jest.mocks/react-native.js',
+    '^react-native-safe-area-context$': '<rootDir>/jest.mocks/react-native-safe-area-context.js',
   },
   transform: {
     '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',

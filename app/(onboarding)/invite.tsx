@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import {
   Pressable,
-  SafeAreaView,
   Share,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import * as Clipboard from 'expo-clipboard'
 import { Button } from '@/components/Button'

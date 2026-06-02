@@ -3,12 +3,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { Button } from '@/components/Button'
 import { Colors, Fonts, FontSizes, Radii, Spacing } from '@/constants/theme'

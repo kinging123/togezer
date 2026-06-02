@@ -1,4 +1,5 @@
-import { View, ActivityIndicator, SafeAreaView, StyleSheet } from 'react-native'
+import { View, ActivityIndicator, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams } from 'expo-router'
 import { useHabit } from '@/features/habits/hooks/useHabit'
 import { useHabitStatus } from '@/features/check-in/hooks/useHabitStatus'
