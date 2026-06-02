@@ -1,5 +1,6 @@
 import { useOAuth, useUser } from '@clerk/expo'
 import { usePostSignUp } from '@/features/auth/hooks/usePostSignUp'
+import { router } from 'expo-router'
 import * as Linking from 'expo-linking'
 import * as WebBrowser from 'expo-web-browser'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
@@ -80,6 +81,15 @@ export default function SignUpScreen() {
               </Pressable>
             ))}
           </View>
+
+          {__DEV__ && (
+            <Pressable
+              style={({ pressed }) => [styles.devBtn, pressed && styles.socialBtnPressed]}
+              onPress={() => router.push('/(auth)/dev-email')}
+            >
+              <Text style={styles.devLabel}>dev: email login</Text>
+            </Pressable>
+          )}
         </View>
 
         <View style={{ flex: 1 }} />
@@ -163,6 +173,22 @@ const styles = StyleSheet.create({
   },
   socialLabelInk: {
     color: Colors.bg,
+  },
+  devBtn: {
+    borderWidth: 1.5,
+    borderColor: Colors.ink3,
+    borderStyle: 'dashed',
+    borderRadius: 999,
+    paddingVertical: 11,
+    alignItems: 'center',
+    marginTop: Spacing.s2,
+  },
+  devLabel: {
+    fontFamily: Fonts.mono,
+    fontSize: FontSizes.label,
+    color: Colors.ink3,
+    textTransform: 'uppercase',
+    letterSpacing: FontSizes.label * 0.1,
   },
   footer: {
     fontFamily: Fonts.body,
