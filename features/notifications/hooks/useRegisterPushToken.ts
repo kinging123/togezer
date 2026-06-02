@@ -1,6 +1,4 @@
 import { useEffect } from 'react'
-import * as Notifications from 'expo-notifications'
-import * as Device from 'expo-device'
 import { Platform } from 'react-native'
 import { useAuth } from '@clerk/expo'
 import { useSupabase } from '@/lib/SupabaseProvider'
@@ -10,9 +8,19 @@ export function useRegisterPushToken() {
   const { userId, isSignedIn } = useAuth()
 
   useEffect(() => {
+    if (Platform.OS === 'web') return
     if (!isSignedIn || !userId) return
 
     async function register() {
+      const Constants = (await import('expo-constants')).default
+      // Expo Go (SDK 53+) dropped remote push notifications; attempting to
+      // register a push token there throws a noisy dev error. Skip it — real
+      // push works in a development/standalone build.
+      if (Constants.executionEnvironment === 'storeClient') return
+
+      const Device = await import('expo-device')
+      const Notifications = await import('expo-notifications')
+
       if (!Device.isDevice) return
 
       const { status: existing } = await Notifications.getPermissionsAsync()
@@ -34,7 +42,7 @@ export function useRegisterPushToken() {
       await sb
         .from('profiles')
         .update({ push_token: token })
-        .eq('id', userId)
+        .eq('id', userId!) // guarded by the early return above
     }
 
     register().catch(console.warn)

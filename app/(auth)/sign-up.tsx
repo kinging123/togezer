@@ -1,5 +1,6 @@
 import { useOAuth, useUser } from '@clerk/expo'
 import { usePostSignUp } from '@/features/auth/hooks/usePostSignUp'
+import * as Linking from 'expo-linking'
 import * as WebBrowser from 'expo-web-browser'
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
@@ -28,7 +29,10 @@ export default function SignUpScreen() {
 
   async function handleOAuth(start: ReturnType<typeof useOAuth>['startOAuthFlow']) {
     try {
-      const { createdSessionId, setActive } = await start()
+      // Redirect back to the app root after OAuth. Without this, Clerk defaults
+      // to `<scheme>://oauth-native-callback`, which has no route and shows
+      // expo-router's "Unmatched Route" page.
+      const { createdSessionId, setActive } = await start({ redirectUrl: Linking.createURL('/') })
       if (createdSessionId) {
         await setActive!({ session: createdSessionId })
         const name = user?.fullName ?? user?.firstName ?? 'friend'
