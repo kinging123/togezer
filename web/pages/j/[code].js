@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 export default function InviteRedirect() {
   const { query } = useRouter()
-  const code = query.code as string
+  const code = query.code
 
   useEffect(() => {
     if (!code) return
