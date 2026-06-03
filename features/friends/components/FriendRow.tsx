@@ -10,8 +10,8 @@ export function FriendRow({ activity }: { activity: FriendActivity }) {
     <View style={styles.row}>
       <Avatar id={profile.id} name={profile.display_name} />
       <View style={styles.meta}>
-        <Text style={styles.name}>{profile.display_name}</Text>
-        <Text style={styles.habit}>{(habit.emoji ?? '✦') + ' ' + habit.title}</Text>
+        <Text style={styles.name} numberOfLines={1}>{profile.display_name}</Text>
+        <Text style={styles.habit} numberOfLines={1}>{(habit.emoji ?? '✦') + ' ' + habit.title}</Text>
       </View>
       <StreakDots checkedDates={recentDates} />
       <Text testID="today-check" style={styles.check}>
@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.line,
   },
-  meta: { flexShrink: 1 },
+  meta: { flex: 1 },
   name: { fontFamily: Fonts.displaySemiBold, fontSize: FontSizes.small, color: Colors.ink },
   habit: { fontFamily: Fonts.mono, fontSize: FontSizes.label, color: Colors.ink3 },
-  check: { marginLeft: 'auto', fontSize: 14 },
+  check: { fontSize: 14 },
 })
