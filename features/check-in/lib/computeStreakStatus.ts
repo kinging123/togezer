@@ -32,16 +32,15 @@ export function computeStreakStatus(
       pendingGrace.length = 0
       streak++
     } else {
-      const weekKey = getWeekSundayStr(cursor)
-      // Count pending + committed grace for this week to check budget
-      const committed  = gracePerWeek.get(weekKey) ?? 0
-      const inPending  = pendingGrace.filter(p => p.weekKey === weekKey).length
-      const totalUsed  = committed + inPending
-      if (totalUsed < graceDaysPW) {
-        pendingGrace.push({ weekKey })
-      } else {
+      // graceDaysPW is the max number of *consecutive* days that may be skipped
+      // and still keep the streak connected. pendingGrace holds the current run
+      // of consecutive misses (it resets to empty on every check-in above), so
+      // once it would exceed the budget the streak is broken — regardless of
+      // which calendar week the missed days fall in.
+      if (pendingGrace.length >= graceDaysPW) {
         break
       }
+      pendingGrace.push({ weekKey: getWeekSundayStr(cursor) })
     }
     cursor = subtractDay(cursor)
   }

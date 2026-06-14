@@ -40,6 +40,16 @@ describe('EditHabitForm', () => {
     expect(router.back).toHaveBeenCalled()
   })
 
+  it('changes only the emoji via the picker and saves', async () => {
+    const { getByTestId, queryByTestId } = render(<EditHabitForm habit={habit} currentStreak={0} />)
+    expect(queryByTestId('emoji-picker')).toBeNull()
+    fireEvent.press(getByTestId('emoji-button'))
+    fireEvent.press(getByTestId('emoji-🔥'))
+    expect(queryByTestId('emoji-picker')).toBeNull() // picking closes the grid
+    await act(async () => { fireEvent.press(getByTestId('btn-save')) })
+    expect(mockMutateAsync).toHaveBeenCalledWith({ oldHabit: habit, title: 'read 20 min', emoji: '🔥' })
+  })
+
   it('does nothing but dismiss when nothing changed', () => {
     const { getByTestId } = render(<EditHabitForm habit={habit} currentStreak={5} />)
     fireEvent.press(getByTestId('btn-save'))

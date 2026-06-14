@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { useHabits } from '@/features/habits/hooks/useHabits'
 import { useHabitStatus } from '@/features/check-in/hooks/useHabitStatus'
+import { useToday } from '@/features/check-in/hooks/useToday'
 import { useFriendsActivity } from '@/features/friends/hooks/useFriendsActivity'
 import { StreakCard } from '@/features/habits/components/StreakCard'
 import { FriendRow } from '@/features/friends/components/FriendRow'
@@ -32,6 +33,7 @@ export default function TodayScreen() {
 }
 
 function TodayBody({ habit }: { habit: Habit }) {
+  useToday() // re-render the date header when the local day rolls over
   const { data: status } = useHabitStatus(habit)
   const { data: friends, refetch, isRefetching } = useFriendsActivity()
   const gang = friends ?? []

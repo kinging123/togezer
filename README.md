@@ -109,3 +109,43 @@ CLERK_SECRET_KEY=sk_...
 ```
 
 get your keys at [clerk.com](https://clerk.com). you'll also need a project on [expo.dev](https://expo.dev) for production push notifications.
+
+---
+
+## push notifications
+
+two notifications, both sent from Supabase Edge Functions via the [Expo Push API](https://docs.expo.dev/push-notifications/sending-notifications/):
+
+- **daily reminder** — every day at 10:00 Israel time, users who haven't checked in yet get nudged. driven by a `pg_cron` job (`daily-habit-reminder`) that calls the `daily-reminder` function.
+- **friend check-in** — when anyone inserts a `check_ins` row, an `AFTER INSERT` trigger calls the `friend-checkin` function, which notifies that user's friends.
+
+> **DST note:** the cron runs at `07:00 UTC` = 10:00 during Israel summer time (IDT). In winter (IST, UTC+2) it lands at 09:00 local. Time is hardcoded for now; the follow-up is to schedule per-user off `profiles.timezone`.
+
+### one-time backend setup
+
+1. **Enable extensions** (Dashboard → Database → Extensions, or the migration): `pg_cron`, `pg_net`.
+2. **Create Vault secrets** (Dashboard → Project Settings → Vault):
+   - `functions_base_url` → `https://<project-ref>.supabase.co/functions/v1`
+   - `cron_secret` → a long random string
+3. **Set the function env var** so it matches the secret:
+   ```bash
+   supabase secrets set CRON_SECRET=<same random string>
+   ```
+4. **Deploy** the functions and run the migration:
+   ```bash
+   supabase functions deploy daily-reminder friend-checkin
+   supabase db push
+   ```
+
+### receiving push on a device
+
+Remote push doesn't work in Expo Go (SDK 53+). Build a dev client with [EAS](https://docs.expo.dev/develop/development-builds/introduction/):
+
+```bash
+npm install -g eas-cli
+eas login
+eas init                              # creates the EAS project + writes extra.eas.projectId
+eas build --profile development -p ios      # and/or -p android
+```
+
+For Android push you must also upload an FCM v1 service-account key (`eas credentials`). iOS APNs credentials are managed automatically by EAS.

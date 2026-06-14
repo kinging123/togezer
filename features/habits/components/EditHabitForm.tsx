@@ -1,16 +1,17 @@
-import { useState } from 'react'
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
+import { Animated, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { router } from 'expo-router'
 import { Button } from '@/components/Button'
 import { Colors, Fonts, FontSizes, Radii, Spacing } from '@/constants/theme'
 import { useReplaceHabit } from '../hooks/useReplaceHabit'
-import { HABIT_PRESETS } from '../presets'
+import { HABIT_EMOJIS, HABIT_PRESETS } from '../presets'
 import type { Habit } from '../types'
 
 export function EditHabitForm({ habit, currentStreak }: { habit: Habit; currentStreak: number }) {
   const [title, setTitle] = useState(habit.title)
   const [emoji, setEmoji] = useState<string | null>(habit.emoji)
   const [activePreset, setActivePreset] = useState<string | null>(null)
+  const [pickingEmoji, setPickingEmoji] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [error, setError] = useState('')
   const { mutateAsync, isPending } = useReplaceHabit()
@@ -23,6 +24,7 @@ export function EditHabitForm({ habit, currentStreak }: { habit: Habit; currentS
     setTitle(preset.title)
     setEmoji(preset.emoji)
     setActivePreset(preset.title)
+    setPickingEmoji(false)
     setConfirming(false)
     setError('')
   }
@@ -30,6 +32,14 @@ export function EditHabitForm({ habit, currentStreak }: { habit: Habit; currentS
   function handleTitleChange(text: string) {
     setTitle(text)
     setActivePreset(null)
+    setConfirming(false)
+    setError('')
+  }
+
+  function handleEmojiPick(next: string) {
+    setEmoji(next)
+    setActivePreset(null)
+    setPickingEmoji(false)
     setConfirming(false)
     setError('')
   }
@@ -64,7 +74,13 @@ export function EditHabitForm({ habit, currentStreak }: { habit: Habit; currentS
         <Text style={styles.headline}>what are you{'\n'}trying to do?</Text>
 
         <View style={styles.inputRow}>
-          <Text style={styles.emojiSlot}>{emoji ?? '✦'}</Text>
+          <Pressable
+            testID="emoji-button"
+            onPress={() => setPickingEmoji((v) => !v)}
+            style={[styles.emojiButton, pickingEmoji && styles.emojiButtonActive]}
+          >
+            <Text style={styles.emojiSlot}>{emoji ?? '✦'}</Text>
+          </Pressable>
           <TextInput
             testID="title-input"
             style={styles.textInput}
@@ -73,8 +89,11 @@ export function EditHabitForm({ habit, currentStreak }: { habit: Habit; currentS
             autoCapitalize="none"
             value={title}
             onChangeText={handleTitleChange}
+            onFocus={() => setPickingEmoji(false)}
           />
         </View>
+
+        {pickingEmoji ? <EmojiPicker selected={emoji} onPick={handleEmojiPick} /> : null}
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
@@ -129,6 +148,44 @@ export function EditHabitForm({ habit, currentStreak }: { habit: Habit; currentS
   )
 }
 
+function EmojiPicker({ selected, onPick }: { selected: string | null; onPick: (e: string) => void }) {
+  const progress = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    Animated.spring(progress, { toValue: 1, useNativeDriver: true, speed: 16, bounciness: 8 }).start()
+  }, [progress])
+
+  return (
+    <Animated.View
+      testID="emoji-picker"
+      style={[
+        styles.emojiGrid,
+        {
+          opacity: progress,
+          transform: [
+            { translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) },
+            { scale: progress.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) },
+          ],
+        },
+      ]}
+    >
+      {HABIT_EMOJIS.map((e) => {
+        const active = e === selected
+        return (
+          <Pressable
+            key={e}
+            testID={`emoji-${e}`}
+            onPress={() => onPick(e)}
+            style={[styles.emojiCell, active && styles.emojiCellActive]}
+          >
+            <Text style={styles.emojiCellText}>{e}</Text>
+          </Pressable>
+        )
+      })}
+    </Animated.View>
+  )
+}
+
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   container: { flex: 1, paddingHorizontal: Spacing.s6, paddingTop: Spacing.s6, paddingBottom: Spacing.s6 },
@@ -146,7 +203,28 @@ const styles = StyleSheet.create({
     marginTop: Spacing.s4,
     gap: Spacing.s2,
   },
+  emojiButton: { borderRadius: Radii.sm, paddingHorizontal: 2, paddingVertical: 2 },
+  emojiButtonActive: { backgroundColor: Colors.bg2 },
   emojiSlot: { fontFamily: Fonts.mono, fontSize: 16, color: Colors.ink3, width: 20, textAlign: 'center' },
+  emojiGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: Spacing.s2,
+    marginTop: Spacing.s3,
+  },
+  emojiCell: {
+    width: '13%', // 7 per row, space-between distributes the remainder as gutters
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: Colors.line,
+    borderRadius: Radii.sm,
+    backgroundColor: Colors.bg,
+  },
+  emojiCellActive: { borderColor: Colors.ink, backgroundColor: Colors.bg2 },
+  emojiCellText: { fontSize: 20 },
   textInput: { flex: 1, fontFamily: Fonts.body, fontSize: FontSizes.body, color: Colors.ink },
   error: { fontFamily: Fonts.body, fontSize: FontSizes.small, color: Colors.red, letterSpacing: -0.2, marginTop: Spacing.s1 },
   presetList: { gap: Spacing.s2, marginTop: Spacing.s2 },

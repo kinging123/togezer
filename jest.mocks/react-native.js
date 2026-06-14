@@ -60,7 +60,35 @@ const ActivityIndicator = ({ testID, ...rest }) =>
 const RefreshControl = ({ refreshing, onRefresh, ...rest }) =>
   React.createElement('RefreshControl', { refreshing, onRefresh, ...rest })
 
+// Minimal Animated stub: values are inert, animations resolve immediately.
+class AnimatedValue {
+  constructor(value) {
+    this._value = value
+  }
+  interpolate() {
+    return new AnimatedValue(this._value)
+  }
+}
+
+const runAnimation = () => ({
+  start: (cb) => cb && cb({ finished: true }),
+})
+
+const Animated = {
+  Value: AnimatedValue,
+  View: ({ children, style, testID, ...rest }) =>
+    React.createElement('View', { style, testID, ...rest }, children),
+  timing: runAnimation,
+  spring: runAnimation,
+}
+
+const AppState = {
+  currentState: 'active',
+  addEventListener: () => ({ remove: () => {} }),
+}
+
 module.exports = {
+  AppState,
   Platform,
   StyleSheet,
   View,
@@ -72,4 +100,5 @@ module.exports = {
   ScrollView,
   ActivityIndicator,
   RefreshControl,
+  Animated,
 }

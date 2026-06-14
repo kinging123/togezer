@@ -135,6 +135,30 @@ describe('computeStreakStatus', () => {
     expect(result.streak).toBe(3)
   })
 
+  it('breaks on two consecutive misses even across a week boundary', () => {
+    // grace_days_pw means "max consecutive days you may skip". A 2-day gap that
+    // straddles the Sunday week boundary (Sat 04-25 + Sun 04-26) is still 2
+    // consecutive misses and must break the streak with grace=1 — it may NOT be
+    // bridged by borrowing one freeze from each calendar week.
+    const result = computeStreakStatus(
+      [
+        { checked_date: '2026-05-02' },
+        { checked_date: '2026-05-01' },
+        { checked_date: '2026-04-30' },
+        { checked_date: '2026-04-29' },
+        { checked_date: '2026-04-28' },
+        { checked_date: '2026-04-27' },
+        // missed 2026-04-26 (Sunday) and 2026-04-25 (Saturday) — 2 in a row
+        { checked_date: '2026-04-24' },
+        { checked_date: '2026-04-23' },
+      ],
+      1,
+      CREATED_AT,
+      TODAY,
+    )
+    expect(result.streak).toBe(6)
+  })
+
   it('returns zero streak when graceDaysPW is 0 and a day is missed', () => {
     const result = computeStreakStatus(
       [

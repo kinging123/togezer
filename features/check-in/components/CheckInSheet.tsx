@@ -16,6 +16,10 @@ export function CheckInSheet({ habit, status }: Props) {
   // status query, so by the time success renders the live value has already
   // advanced — showing e.g. 1→2 instead of 0→1.
   const [newStreak, setNewStreak] = useState(0)
+  // Whether this check-in actually advanced the streak. False when today was
+  // already checked in (the 23505 duplicate path), so we confirm the current
+  // streak without animating a misleading "old -> new" tick.
+  const [incremented, setIncremented] = useState(true)
   const [error, setError] = useState('')
   const { mutateAsync, isPending } = useCheckIn()
 
@@ -29,10 +33,13 @@ export function CheckInSheet({ habit, status }: Props) {
       const trimmed = note.trim()
       await mutateAsync({ habitId: habit.id, note: trimmed || undefined })
       setNewStreak(streakWithToday)
+      setIncremented(!status.hasCheckedInToday)
       setPhase('success')
     } catch (e: any) {
       if (e?.code === '23505') {
+        // Already checked in today — nothing was inserted, so don't show a +1.
         setNewStreak(streakWithToday)
+        setIncremented(false)
         setPhase('success')
         return
       }
@@ -48,7 +55,7 @@ export function CheckInSheet({ habit, status }: Props) {
         </View>
         <Text style={styles.lbl}>checked in for today</Text>
         <View style={styles.tickRow}>
-          <Text style={styles.tickOld}>{newStreak - 1}</Text>
+          {incremented ? <Text testID="streak-tick-old" style={styles.tickOld}>{newStreak - 1}</Text> : null}
           <Text style={styles.tickNew}>{newStreak}</Text>
         </View>
         <Text style={styles.cap}>{'day streak · ' + habit.title}</Text>

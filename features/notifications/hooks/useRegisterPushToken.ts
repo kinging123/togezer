@@ -37,7 +37,14 @@ export function useRegisterPushToken() {
         })
       }
 
-      const { data: token } = await Notifications.getExpoPushTokenAsync()
+      // projectId is required to resolve a token in dev/standalone builds.
+      const projectId =
+        Constants.expoConfig?.extra?.eas?.projectId ??
+        Constants.easConfig?.projectId
+
+      const { data: token } = await Notifications.getExpoPushTokenAsync(
+        projectId ? { projectId } : undefined
+      )
 
       await sb
         .from('profiles')

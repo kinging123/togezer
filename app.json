@@ -11,7 +11,9 @@
     "ios": {
       "bundleIdentifier": "app.togezer",
       "supportsTablet": true,
-      "associatedDomains": ["applinks:togezerapp.vercel.app"]
+      "associatedDomains": [
+        "applinks:togezerapp.vercel.app"
+      ]
     },
     "android": {
       "package": "app.togezer",
@@ -56,11 +58,28 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "packagingOptions": {
+              "exclude": ["META-INF/versions/9/OSGI-INF/MANIFEST.MF"]
+            }
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7a90e441-4b82-4e9e-b103-4bef96d0ce48"
+      }
+    },
+    "owner": "reuvenkarasik"
   }
 }

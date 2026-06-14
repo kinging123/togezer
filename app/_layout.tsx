@@ -19,12 +19,18 @@ import { tokenCache } from '@/lib/clerk-token-cache'
 import { queryClient } from '@/lib/queryClient'
 import { SupabaseProvider } from '@/lib/SupabaseProvider'
 import { useRegisterPushToken } from '@/features/notifications/hooks/useRegisterPushToken'
+import { useNotificationObserver } from '@/features/notifications/hooks/useNotificationObserver'
+import { useToday } from '@/features/check-in/hooks/useToday'
 import { useHasHabit } from '@/features/habits/hooks/useHasHabit'
 
 SplashScreen.preventAutoHideAsync()
 
 function AppServices() {
   useRegisterPushToken()
+  useNotificationObserver()
+  // Subscribe app-wide so the day-rollover watcher starts and refreshes
+  // streak/"today" data when the local date changes while the app is open.
+  useToday()
   return null
 }
 

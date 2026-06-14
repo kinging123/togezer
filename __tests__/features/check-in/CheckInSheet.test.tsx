@@ -56,4 +56,23 @@ describe('CheckInSheet', () => {
     await act(async () => { fireEvent.press(getByTestId('confirm')) })
     expect(getByTestId('checkin-success')).toBeTruthy()
   })
+
+  it('does not show a +1 increment on the 23505 already-done path', async () => {
+    // Nothing was inserted (today was already checked in), so the success view
+    // must NOT animate a struck-through "old -> new" tick. It just confirms the
+    // current streak (1, which already includes today).
+    mockMutateAsync.mockRejectedValueOnce({ code: '23505' })
+    const { getByTestId, getByText, queryByTestId } = render(
+      <CheckInSheet habit={habit} status={freshStatus} />
+    )
+    await act(async () => { fireEvent.press(getByTestId('confirm')) })
+    expect(getByText('1')).toBeTruthy()                  // current streak (today counted)
+    expect(queryByTestId('streak-tick-old')).toBeNull()  // no struck-through old number
+  })
+
+  it('shows the struck-through old number only when the check-in increments', async () => {
+    const { getByTestId } = render(<CheckInSheet habit={habit} status={{ ...freshStatus, streak: 7 }} />)
+    await act(async () => { fireEvent.press(getByTestId('confirm')) })
+    expect(getByTestId('streak-tick-old')).toBeTruthy()
+  })
 })
